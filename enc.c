@@ -39,8 +39,10 @@ void str_encode(const char* in, char** out, const char* password, int iterations
     unsigned char* inbuf = malloc(inlen);
     memcpy(inbuf, in, inlen);
 
+    int max_outlen = inlen + EVP_CIPHER_CTX_block_size(ctx);
+    unsigned char* outbuf = malloc(max_outlen);
+
     int outlen, tmplen;
-    unsigned char* outbuf = malloc(inlen + EVP_MAX_IV_LENGTH);
     EVP_EncryptUpdate(ctx, outbuf, &outlen, inbuf, inlen);
     EVP_EncryptFinal_ex(ctx, outbuf + outlen, &tmplen);
     outlen += tmplen;
@@ -57,6 +59,7 @@ void str_encode(const char* in, char** out, const char* password, int iterations
 
     BUF_MEM* bptr;
     BIO_get_mem_ptr(b64, &bptr);
+
     *out = malloc(bptr->length + 1);
     memcpy(*out, bptr->data, bptr->length);
     (*out)[bptr->length] = '\0';
@@ -153,22 +156,27 @@ void handle_file_mode(const char *password, char *path) {
 int handle_string_mode(const char *password, int path_pos, int argc, char **argv) {
     char *encoded = NULL;
     char *decoded = NULL;
-    char input[MAX_LEN];
+    char *input = NULL;
 
     if (path_pos != 0) {
         FILE *file = fopen(argv[path_pos], "r");
         if (file) {
-            size_t n = fread(input, 1, sizeof(input) - 1, file);
+            fseek(file, 0, SEEK_END);
+            long file_size = ftell(file);
+            fseek(file, 0, SEEK_SET);
+            input = malloc(file_size + 1);
+            size_t n = fread(input, 1, file_size, file);
             input[n] = '\0';
             fclose(file);
         } else {
-            printf("Error: File not found\n");
+            printf("\nError: File not found\n");
         }
     } else if (argc >= 2) {
-        strcpy(input, argv[1]);
+        input = strdup(argv[1]);
     } else {
+        size_t input_size = 0;
         printf("String: ");
-        fgets(input, MAX_LEN, stdin);
+        getline(&input, &input_size, stdin);
         input[strcspn(input, "\n")] = '\0';
     }
 
@@ -181,6 +189,7 @@ int handle_string_mode(const char *password, int path_pos, int argc, char **argv
         free(encoded);
     }
 
+    free(input);
     return 0;
 }
 
@@ -207,7 +216,7 @@ int main(int argc, char **argv) {
     }
 
     if (string_mode == 1 && path_pos == 0) {
-        printf("Error: String mode activated, but no files given.\n");
+        printf("\nError: String mode activated, but no files given.\n");
         helper(argv[0]);
         return 1;
     }
