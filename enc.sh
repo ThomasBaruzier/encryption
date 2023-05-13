@@ -83,3 +83,5 @@ enc() {
     echo
   fi
 }
+
+enc "$@"
