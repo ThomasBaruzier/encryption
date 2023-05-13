@@ -21,16 +21,12 @@ This project is a command line tool to encrypt and decrypt files and strings usi
 
 ## Tutorial/Documentation
 
-### Compile
+### C program (enc.c)
 
-To compile the `enc.c` file, use the `make` command.
-This will create an executable file called `enc` in the current directory.
+1. Compilation:
 
-### Usage
-
-#### C program (enc.c)
-
-To use this project, you can either run the `enc` executable directly or use the `enc.sh` shell script.
+   To compile the `enc.c` file, use the `make` command.
+   This will create an executable file called `enc` in the current directory.
 
 2. Run the program with the appropriate options:
 
@@ -46,12 +42,12 @@ To use this project, you can either run the `enc` executable directly or use the
    Examples:
 
    ```
-   ./enc "Hello, world!"            # Encode/decode a string
+   ./enc "Hello, world!"             # Encode/decode a string
    ./enc -s input.txt                # Encode/decode the content of a file
    ./enc /path/to/file.txt           # Encrypt/decrypt a file
    ```
 
-#### Bash Script (enc.sh)
+### Bash Script (enc.sh)
 
 1. Make the script executable:
 
@@ -75,7 +71,7 @@ To use this project, you can either run the `enc` executable directly or use the
    Examples:
 
    ```
-   ./enc.sh "Hello, world!"          # Encode/decode a string
+   ./enc.sh "Hello, world!"           # Encode/decode a string
    ./enc.sh -s input.txt              # Encode/decode the content of a file
    ./enc.sh /path/to/file.txt         # Encrypt/decrypt a file
    ```
