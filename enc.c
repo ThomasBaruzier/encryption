@@ -212,11 +212,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    printf("Password: ");
-    char password[MAX_LEN];
-    fgets(password, MAX_LEN, stdin);
-    password[strcspn(password, "\n")] = '\0';
-
+    char *password = getpass("Password: ");
     if (path_pos == 0 || string_mode == 1) {
         return handle_string_mode(password, path_pos, argc, argv);
     } else {
